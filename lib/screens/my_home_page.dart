@@ -14,6 +14,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late MyRepository myRepository;
+  int selectedCategory = 0;
+  List<ProductItem> products = [];
+  List<String> categories = [];
+  bool isLoaded = true;
 
   @override
   void initState() {
@@ -21,50 +25,113 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  void _init() {
+  void updateUI(String categoryName) async {
+    isLoaded = true;
+    products = await myRepository.getSpecificCategoryProducts(categoryName);
+    isLoaded = false;
+    setState(() {});
+  }
+
+  void _init() async {
     myRepository = MyRepository(
       apiProvider: ApiProvider(),
       localDatabase: LocalDatabase(),
-      myStorage: MyStorage(),
     );
+    categories = await myRepository.getAllCategories();
+    products = await myRepository.getAllProducts();
+    isLoaded = false;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("REquests"),
+          title: const Text("Commercial App"),
         ),
-        body: FutureBuilder<List<ProductItem>>(
-          future: myRepository.getAllProducts(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text("Error"),
-              );
-            } else if (snapshot.hasData) {
-              var items = snapshot.data!;
-              return ListView(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: const Text(
+                "Categories",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 30,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
                 children: List.generate(
-                    items.length, (index) => Text(items[index].toString())),
-              );
-            } else {
-              return GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 12,
-                children: List.generate(
-                  10,
-                  (index) => Container(
-                    color: Colors.red,
-                    child: Center(
-                      child: CircularProgressIndicator(),
+                  categories.length,
+                  (index) => GestureDetector(
+                    onTap: () async {
+                      selectedCategory = index;
+                      setState(
+                        () {},
+                      );
+                      updateUI(categories[index]);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      decoration: BoxDecoration(
+                          color: selectedCategory == index
+                              ? Colors.black
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                              color: Colors.grey.shade400, width: 2)),
+                      child: Center(
+                          child: Text(
+                        categories[index],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: selectedCategory != index
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                      )),
                     ),
                   ),
                 ),
-              );
-            }
-          },
+              ),
+            ),
+            Visibility(
+                visible: !isLoaded,
+                child: Expanded(
+                  child: ListView(
+                    scrollDirection: Axis.vertical,
+                    children: List.generate(
+                        products.length,
+                        (index) =>
+                            Expanded(child: Text(products[index].toString()))),
+                  ),
+                )),
+            Visibility(
+                visible: isLoaded,
+                child: Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 12,
+                    children: List.generate(
+                      10,
+                      (index) => Container(
+                        color: Colors.red,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ))
+          ],
         ));
   }
 }
