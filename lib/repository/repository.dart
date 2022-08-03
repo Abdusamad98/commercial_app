@@ -1,6 +1,6 @@
 import 'package:commercial_app/local_data/local_database.dart';
 import 'package:commercial_app/local_data/storage.dart';
-import 'package:commercial_app/models/product_item.dart';
+import 'package:commercial_app/models/products/product_item.dart';
 import 'package:commercial_app/service/api_provider.dart';
 
 class MyRepository {

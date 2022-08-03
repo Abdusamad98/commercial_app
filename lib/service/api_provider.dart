@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:commercial_app/models/product_item.dart';
+import 'package:commercial_app/models/products/product_item.dart';
 import 'package:http/http.dart' as https;
 import 'package:http/http.dart';
 
@@ -68,14 +68,16 @@ class ApiProvider {
   Future<ProductItem> addNewProductToServer(
       {required ProductItem productItem}) async {
     try {
-      Response response = await https
-          .post(Uri.parse("https://fakestoreapi.com/products"), body: {
-        "title": productItem.title,
-        "price": productItem.price,
-        "description": productItem.description,
-        "image": productItem.image,
-        "category": productItem.category
-      });
+      Response response = await https.post(
+        Uri.parse("https://fakestoreapi.com/products"),
+        body: {
+          "title": productItem.title,
+          "price": productItem.price,
+          "description": productItem.description,
+          "image": productItem.image,
+          "category": productItem.category
+        },
+      );
       if (response.statusCode == 200) {
         return ProductItem.fromJson(jsonDecode(response.body));
       } else {

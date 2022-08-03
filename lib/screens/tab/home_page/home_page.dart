@@ -1,23 +1,21 @@
-import 'package:commercial_app/local_data/local_database.dart';
-import 'package:commercial_app/local_data/storage.dart';
-import 'package:commercial_app/models/product_item.dart';
+import 'package:commercial_app/models/products/product_item.dart';
 import 'package:commercial_app/repository/repository.dart';
-import 'package:commercial_app/service/api_provider.dart';
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key, required this.myRepository}) : super(key: key);
+
+  final MyRepository myRepository;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  late MyRepository myRepository;
+class _HomeScreenState extends State<HomeScreen> {
   int selectedCategory = 0;
   List<ProductItem> products = [];
   List<String> categories = [];
-  bool isLoaded = true;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -26,20 +24,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void updateUI(String categoryName) async {
-    isLoaded = true;
-    products = await myRepository.getSpecificCategoryProducts(categoryName);
-    isLoaded = false;
+    isLoading = true;
+    products =
+        await widget.myRepository.getSpecificCategoryProducts(categoryName);
+    isLoading = false;
     setState(() {});
   }
 
   void _init() async {
-    myRepository = MyRepository(
-      apiProvider: ApiProvider(),
-      localDatabase: LocalDatabase(),
-    );
-    categories = await myRepository.getAllCategories();
-    products = await myRepository.getAllProducts();
-    isLoaded = false;
+    categories = await widget.myRepository.getAllCategories();
+    products = await widget.myRepository.getAllProducts();
+    isLoading = false;
     setState(() {});
   }
 
@@ -103,34 +98,36 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Visibility(
-                visible: !isLoaded,
-                child: Expanded(
-                  child: ListView(
-                    scrollDirection: Axis.vertical,
-                    children: List.generate(
-                        products.length,
-                        (index) =>
-                            Expanded(child: Text(products[index].toString()))),
-                  ),
-                )),
+              visible: !isLoading,
+              child: Expanded(
+                child: ListView(
+                  scrollDirection: Axis.vertical,
+                  children: List.generate(
+                      products.length,
+                      (index) =>
+                          Expanded(child: Text(products[index].toString()))),
+                ),
+              ),
+            ),
             Visibility(
-                visible: isLoaded,
-                child: Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 14,
-                    crossAxisSpacing: 12,
-                    children: List.generate(
-                      10,
-                      (index) => Container(
-                        color: Colors.red,
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+              visible: isLoading,
+              child: Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 14,
+                  crossAxisSpacing: 12,
+                  children: List.generate(
+                    10,
+                    (index) => Container(
+                      color: Colors.red,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
                       ),
                     ),
                   ),
-                ))
+                ),
+              ),
+            )
           ],
         ));
   }

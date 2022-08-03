@@ -1,4 +1,4 @@
-import 'package:commercial_app/models/rating_item.dart';
+import 'package:commercial_app/models/products/rating_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'product_item.g.dart';
