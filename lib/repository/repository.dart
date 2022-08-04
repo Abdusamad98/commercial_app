@@ -14,6 +14,8 @@ class MyRepository {
 
   Future<List<ProductItem>> getAllProducts() => apiProvider.getProductsList();
 
+  Future<List<String>> getAllCategories() => apiProvider.getAllCategories();
+
   Future<List<ProductItem>> getSpecificCategoryProducts(String categoryName) =>
       apiProvider.getSpecificCategoryProducts(
         categoryName: categoryName,
@@ -24,8 +26,6 @@ class MyRepository {
 
   Future<ProductItem> addProductToServer(ProductItem productItem) =>
       apiProvider.addNewProductToServer(productItem: productItem);
-
-  Future<List<String>> getAllCategories() => apiProvider.getAllCategories();
 
   Future<String> loginUser(
           {required String username, required String password}) =>

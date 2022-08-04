@@ -1,5 +1,8 @@
 import 'package:commercial_app/models/products/product_item.dart';
 import 'package:commercial_app/repository/repository.dart';
+import 'package:commercial_app/screens/tab/home_page/widgets/category_list_item.dart';
+import 'package:commercial_app/screens/tab/home_page/widgets/product_grid_shimmer.dart';
+import 'package:commercial_app/screens/tab/home_page/widgets/product_list_item.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,8 +35,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _init() async {
-    categories = await widget.myRepository.getAllCategories();
-    products = await widget.myRepository.getAllProducts();
+    //1 -usul
+    // categories = await widget.myRepository.getAllCategories();
+    // products = await widget.myRepository.getAllProducts();
+
+    //2 -usul
+    final getTotals = await Future.wait([
+      widget.myRepository.getAllCategories(),
+      widget.myRepository.getAllProducts(),
+    ]);
+    categories = getTotals[0] as List<String>;
+    products = getTotals[1] as List<ProductItem>;
+
     isLoading = false;
     setState(() {});
   }
@@ -63,70 +76,44 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
-                  categories.length,
-                  (index) => GestureDetector(
-                    onTap: () async {
-                      selectedCategory = index;
-                      setState(
-                        () {},
-                      );
-                      updateUI(categories[index]);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      margin: const EdgeInsets.symmetric(horizontal: 6),
-                      decoration: BoxDecoration(
-                          color: selectedCategory == index
-                              ? Colors.black
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: Colors.grey.shade400, width: 2)),
-                      child: Center(
-                          child: Text(
-                        categories[index],
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: selectedCategory != index
-                              ? Colors.black
-                              : Colors.white,
-                        ),
-                      )),
-                    ),
-                  ),
-                ),
+                    categories.length,
+                    (index) => CategoryListItem(
+                          onTap: () async {
+                            selectedCategory = index;
+                            setState(
+                              () {},
+                            );
+                            updateUI(categories[index]);
+                          },
+                          categoryName: categories[index],
+                          selectedCategoryIndex: selectedCategory,
+                          index: index,
+                        )),
               ),
             ),
             Visibility(
               visible: !isLoading,
               child: Expanded(
-                child: ListView(
-                  scrollDirection: Axis.vertical,
+                child: GridView.count(
+                  padding: const EdgeInsets.all(16),
+                  physics: const BouncingScrollPhysics(),
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.7,
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 15,
                   children: List.generate(
-                      products.length,
-                      (index) =>
-                          Expanded(child: Text(products[index].toString()))),
+                    products.length,
+                    (index) => ProductListItem(
+                      productItem: products[index],
+                      onTap: () {},
+                    ),
+                  ),
                 ),
               ),
             ),
             Visibility(
               visible: isLoading,
-              child: Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 12,
-                  children: List.generate(
-                    10,
-                    (index) => Container(
-                      color: Colors.red,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child:const ProductsGridShimmer(),
             )
           ],
         ));

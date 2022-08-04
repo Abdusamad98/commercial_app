@@ -25,6 +25,7 @@ class _TabBoxState extends State<TabBox> {
     myRepository = MyRepository(
       apiProvider: ApiProvider(),
       localDatabase: LocalDatabase(),
+
     );
 
     screens = [
@@ -41,18 +42,25 @@ class _TabBoxState extends State<TabBox> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      body:screens[currentIndex],
+      // IndexedStack(
+      //   index: currentIndex,
+      //   children: screens,
+      // ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.blueAccent,
         iconSize: 24,
-        onTap: (index) {
+        onTap:
+            (index) {
           setState(() {
             currentIndex = index;
           });
+
+          switch(currentIndex){
+            case 0:{}
+              break;
+          }
         },
         currentIndex: currentIndex,
         selectedItemColor: Colors.white,

@@ -50,8 +50,7 @@ class ApiProvider {
     required int productId,
   }) async {
     try {
-      Response response = await https
-          .get(Uri.parse("https://fakestoreapi.com/products/$productId"));
+      Response response = await https.get(Uri.parse("https://fakestoreapi.com/products/$productId"));
       if (response.statusCode == 200) {
         return ProductItem.fromJson(jsonDecode(response.body));
       } else {
@@ -96,15 +95,20 @@ class ApiProvider {
       Response response = await https
           .get(Uri.parse("https://fakestoreapi.com/products/categories"));
       if (response.statusCode == 200) {
-        return (jsonDecode(response.body) as List<dynamic>?)
+        var jsonMap = jsonDecode(response.body);
+        return ( jsonMap as List<dynamic>?)
                 ?.map((e) => e as String)
                 .toList() ??
             [];
       } else {
         throw Exception();
       }
-    } catch (e) {
+    }
+    catch (e) {
+      print(e);
       throw Exception(e);
+    } finally {
+
     }
   }
 
