@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:commercial_app/models/products/product_item.dart';
+import 'package:commercial_app/models/users/user_item.dart';
 import 'package:http/http.dart' as https;
 import 'package:http/http.dart';
+
+import '../models/carts/cart.dart';
 
 class ApiProvider {
   // Serverdan barcha mahsulotlarni olib keladi
@@ -26,7 +29,8 @@ class ApiProvider {
   }
 
   //Serverdan bergan sonimizcha mahsulot olib keladi
-  Future<List<ProductItem>> getLimitedList({required limitedCount}) async {
+  static Future<List<ProductItem>> getLimitedList(
+      {required limitedCount}) async {
     try {
       Response response = await https.get(
           Uri.parse("https://fakestoreapi.com/products?limit=$limitedCount"));
@@ -50,9 +54,11 @@ class ApiProvider {
     required int productId,
   }) async {
     try {
-      Response response = await https.get(Uri.parse("https://fakestoreapi.com/products/$productId"));
+      Response response = await https
+          .get(Uri.parse("https://fakestoreapi.com/products/$productId"));
       if (response.statusCode == 200) {
-        return ProductItem.fromJson(jsonDecode(response.body));
+        var jsonData = jsonDecode(response.body);
+        return ProductItem.fromJson(jsonData);
       } else {
         throw Exception();
       }
@@ -96,20 +102,15 @@ class ApiProvider {
           .get(Uri.parse("https://fakestoreapi.com/products/categories"));
       if (response.statusCode == 200) {
         var jsonMap = jsonDecode(response.body);
-        return ( jsonMap as List<dynamic>?)
-                ?.map((e) => e as String)
-                .toList() ??
+        return (jsonMap as List<dynamic>?)?.map((e) => e as String).toList() ??
             [];
       } else {
         throw Exception();
       }
-    }
-    catch (e) {
+    } catch (e) {
       print(e);
       throw Exception(e);
-    } finally {
-
-    }
+    } finally {}
   }
 
   Future<List<ProductItem>> getSpecificCategoryProducts({
@@ -162,6 +163,48 @@ class ApiProvider {
         throw Exception();
       }
     } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  //---------------Cartlar , hammani qiynayotgan savollar--------------------------
+
+  //Get All Categories
+
+  Future<List<Cart>> getAllCarts() async {
+    try {
+      Response response =
+          await https.get(Uri.parse("https://fakestoreapi.com/carts"));
+      if (response.statusCode == 200) {
+        List<Cart> carts = (jsonDecode(response.body) as List?)
+                ?.map((item) => Cart.fromJson(item))
+                .toList() ??
+            [];
+        return carts;
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    } finally {}
+  }
+
+  // Get single user item
+  Future<UserItem> getSingleUser({
+    required int userId,
+  }) async {
+    try {
+      Response response =
+          await https.get(Uri.parse("https://fakestoreapi.com/users/$userId"));
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        return UserItem.fromJson(jsonData);
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      print(e.toString());
       throw Exception(e);
     }
   }

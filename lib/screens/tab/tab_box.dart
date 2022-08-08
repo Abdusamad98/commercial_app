@@ -25,7 +25,6 @@ class _TabBoxState extends State<TabBox> {
     myRepository = MyRepository(
       apiProvider: ApiProvider(),
       localDatabase: LocalDatabase(),
-
     );
 
     screens = [

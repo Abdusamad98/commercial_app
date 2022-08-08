@@ -1,5 +1,6 @@
 
 import 'package:commercial_app/screens/tab/tab_box.dart';
+import 'package:commercial_app/service/api_provider.dart';
 import 'package:flutter/material.dart';
 
 void main() async{
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

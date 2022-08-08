@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    print("INIT STATE CALEED");
     _init();
     super.initState();
   }
@@ -38,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
     //1 -usul
     // categories = await widget.myRepository.getAllCategories();
     // products = await widget.myRepository.getAllProducts();
-
     //2 -usul
+
     final getTotals = await Future.wait([
       widget.myRepository.getAllCategories(),
       widget.myRepository.getAllProducts(),
@@ -53,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("BUILD CALEED");
     return Scaffold(
         appBar: AppBar(
           title: const Text("Commercial App"),
@@ -113,9 +115,29 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Visibility(
               visible: isLoading,
-              child:const ProductsGridShimmer(),
+              child: const ProductsGridShimmer(),
             )
           ],
         ));
+  }
+
+
+
+  @override
+  void didChangeDependencies() {
+    print("didChangeDependencies CALEED");
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    print("dispose CALEED");
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    print("deactivate CALEED");
+    super.deactivate();
   }
 }
