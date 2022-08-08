@@ -47,28 +47,30 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
               mainAxisSpacing: 20,
               crossAxisSpacing: 15,
               children: List.generate(
-                  widget.cart.products.length,
-                  (index) => FutureBuilder(
-                      future: widget.myRepository.getSingleProduct(
-                          widget.cart.products[index].productId),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<ProductItem> snapshot) {
-                        if (snapshot.hasData) {
-                          var product = snapshot.data!;
-                          return ProductListItem(
-                            productItem: product,
-                            onTap: () {},
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(snapshot.error.toString()),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      })),
+                widget.cart.products.length,
+                (index) => FutureBuilder(
+                  future: widget.myRepository
+                      .getSingleProduct(widget.cart.products[index].productId),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<ProductItem> snapshot) {
+                    if (snapshot.hasData) {
+                      var product = snapshot.data!;
+                      return ProductListItem(
+                        productItem: product,
+                        onTap: () {},
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.error.toString()),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
+              ),
             ),
           ),
         ],
@@ -85,14 +87,14 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           return Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  spreadRadius: 8,blurRadius: 10,offset: Offset(1,4),
-                  color: Colors.grey.shade300,
-                )
-              ],
-                borderRadius: BorderRadius.circular(16), color: Colors.white),
+            decoration: BoxDecoration(boxShadow: [
+              BoxShadow(
+                spreadRadius: 8,
+                blurRadius: 10,
+                offset: Offset(1, 4),
+                color: Colors.grey.shade300,
+              )
+            ], borderRadius: BorderRadius.circular(16), color: Colors.white),
             child: Column(
               children: [
                 Row(
