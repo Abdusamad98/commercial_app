@@ -18,20 +18,6 @@ class CartDetailScreen extends StatefulWidget {
 }
 
 class _CartDetailScreenState extends State<CartDetailScreen> {
-  late UserItem user;
-  List<ProductItem> allProducts = [];
-
-  Future<void> _init() async {
-    allProducts = await widget.myRepository.getAllProducts();
-    user = await widget.myRepository.getSingleUser(widget.cart.userId);
-  }
-
-  @override
-  void initState() {
-    _init();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
